@@ -1,6 +1,8 @@
 package ru.shamilprog.android.draganddraw;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -15,6 +17,8 @@ public class BoxDrawingView extends View {
 
     private Box mCurrentBox;
     private List<Box> mBoxen = new ArrayList<>();
+    private Paint mBoxPaint;
+    private Paint mBackgroundPaint;
 
     // Used when a view is being created programmatically
     public BoxDrawingView(Context context) {
@@ -24,6 +28,28 @@ public class BoxDrawingView extends View {
     // Used when a view is being inflated according to XML
     public BoxDrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        // Boxes are drawn using half-transparent red color (ARGB)
+        mBoxPaint = new Paint();
+        mBoxPaint.setColor(0x22ff0000);
+
+        // Background is filled using grayish white color
+        mBackgroundPaint = new Paint();
+        mBackgroundPaint.setColor(0xfff8efe0);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        // Filling the background
+        canvas.drawPaint(mBackgroundPaint);
+
+        for (Box box : mBoxen) {
+            float left = Math.min(box.getOrigin().x, box.getCurrent().x);
+            float right = Math.max(box.getOrigin().x, box.getCurrent().x);
+            float top = Math.min(box.getOrigin().y, box.getCurrent().y);
+            float bottom = Math.max(box.getOrigin().y, box.getCurrent().y);
+            canvas.drawRect(left, top, right, bottom, mBoxPaint);
+        }
     }
 
     @Override
